@@ -278,7 +278,7 @@ main{max-width:1100px;margin:0 auto;position:relative}
 <script>
 (function(){
 'use strict';
-var KEY='nexus_store_v1',SUPPORT='51721023';
+var KEY='nexus_store_v1',SUPPORT='51721023',ADMIN_H=['scbpkp9hro'];
 var $=function(s,r){return (r||document).querySelector(s)};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
 var money=function(n){return '$'+(Math.round(n*100)/100).toFixed(2)};
@@ -314,7 +314,7 @@ function price(p){var v=DB.prices[p.id];return v==null?p.price:v}
 
 /* ---------- storage ---------- */
 var DB=null,mem=null;
-function seed(){return {users:[{id:'u1',name:'Administrador',login:'admin@nexus.store',pass:hp('Nexus2026!'),role:'admin',balance:0,created:Date.now(),banned:false,prefs:{snow:true,lights:true,notifs:true}}],orders:[],deposits:[],tx:[],notifs:[],prices:{},carts:{},seq:1000,uid:1,session:null,gp:{snow:true,lights:true,notifs:true}}}
+function seed(){return {users:[],orders:[],deposits:[],tx:[],notifs:[],prices:{},carts:{},seq:1000,uid:1,session:null,gp:{snow:true,lights:true,notifs:true}}}
 function load(){try{var r=localStorage.getItem(KEY);if(r){var d=JSON.parse(r);if(d&&d.users)return d}}catch(e){}return mem}
 function save(){mem=DB;try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
 function nid(p){return p+(++DB.uid).toString(36)+Math.random().toString(36).slice(2,5)}
@@ -616,7 +616,7 @@ var ACT={
   if(l.length<5){mErr('Escribe un correo o teléfono válido.');return}
   if(p.length<6){mErr('La contraseña necesita al menos 6 caracteres.');return}
   if(DB.users.some(function(x){return x.login.toLowerCase()===l.toLowerCase()})){mErr('Ese correo o teléfono ya está registrado.');return}
-  var u={id:nid('u'),name:n,login:l,pass:hp(p),role:'user',balance:0,created:Date.now(),banned:false,prefs:Object.assign({},DB.gp)};
+  var u={id:nid('u'),name:n,login:l,pass:hp(p),role:ADMIN_H.indexOf(hp(l.toLowerCase()))>-1?'admin':'user',balance:0,created:Date.now(),banned:false,prefs:Object.assign({},DB.gp)};
   DB.users.push(u);DB.session=u.id;notify(u.id,'¡Bienvenido a NEXUS STORE, '+n+'! Felices fiestas.');notifyAdmins('Nuevo usuario registrado: '+n);
   save();closeOv();applyPrefs();refresh();toast('Cuenta creada')},
  logout:function(){DB.session=null;S.pay='wallet';save();applyPrefs();renderHdr();go('inicio');toast('Sesión cerrada')},
